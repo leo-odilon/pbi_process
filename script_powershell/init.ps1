@@ -1,47 +1,29 @@
 #!/usr/bin/env pwsh
 
-# Definir o nome do container
-$containerName = "trino"
+$containerName = "hive4"
 
-function Show-Loading {
-    param (
-        [int]$duration
-    )
-    
-    $interval = 0.5
-    $chars = @("|", "/", "-", "\")
-    $startTime = Get-Date
+Set-Location -Path ".."
+Write-Host (Get-Location)
 
-    while ((Get-Date).Subtract($startTime).TotalSeconds -lt $duration) {
-        foreach ($char in $chars) {
-            Write-Host -NoNewline "`rLoading $char"
-            Start-Sleep -Seconds $interval
-        }
-    }
-    Write-Host -NoNewline "`r"
-}
-
-# Mudar para o diretório pai
-Set-Location ..\
-
-# Obter o caminho atual
-$pwd = Get-Location
-Write-Host $pwd
-
-# Remover o container existente e executar um novo container
 podman rm -f $containerName
 podman run -d `
   --name $containerName `
-  -p 8080:8080 `
-  -v "$pwd\etc:/etc/trino" `
-  -v "$pwd\data:/data" `
-  -v "$pwd\parquet:/parquet" `
-  -v "$pwd\querys\tables:/querys" `
-  trinodb/trino
+  -p 10000:10000 -p 10002:10002 `
+  --env SERVICE_NAME=hiveserver2 `
+  -v ${PWD}/parquet:/data/parquet `
+  -v ${PWD}/query/tables:/data/tables `
+  apache/hive:4.0.0
 
 Write-Host "Inicializando configurações"
-Show-Loading -duration 15
-
+Sleep 10
 Write-Host "Criando estrutura do banco de dados"
-podman exec -it $containerName /bin/sh -c "trino --server http://localhost:8080 -f /querys/pbi.sql"
-Write-Host "Ambiente pronto"
+podman exec -it $containerName /bin/sh -c "beeline -u jdbc:hive2://localhost:10000 -f /data/tables/hive.sql"
+Write-Host "Apache Hive pronto"
+Write-Host "Verificando arquivos para processamento"
+Sleep 2
+
+Set-Location -Path "script_powershell"
+
+. ./ingestion.ps1
+
+Write-Host "Tudo pronto"
