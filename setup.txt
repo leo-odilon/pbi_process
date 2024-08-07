@@ -1,0 +1,30 @@
+podman rm -f trino && podman run -d \
+  --name trino \
+  -p 8080:8080 \
+  -v /Users/odilon/projetos/tools/trino/etc:/etc/trino \
+  -v /Users/odilon/projetos/tools/trino/data:/data \
+  -v /Users/odilon/projetos/tools/trino/parquet:/parquet \
+  -v /Users/odilon/projetos/tools/trino/querys/tables:/querys \
+  trinodb/trino 
+
+  podman exec -it trino /bin/sh -c "trino --server http://localhost:8080 -f /querys/pbi.sql"
+
+
+
+python script.py caminho/da/pasta nome_da_tabela quantidade_de_linhas_para_ignorar pasta_de_saida nome_do_parquet
+
+podman rm -f python && podman run -d \
+  --name python \
+  -p 8080:8080 \
+  -v /Users/odilon/projetos/tools/trino/etc:/etc/trino \
+  -v /Users/odilon/projetos/tools/trino/data:/data \
+  -v /Users/odilon/projetos/tools/trino/parquet:/parquet \
+  -v /Users/odilon/projetos/tools/trino/querys/tables:/querys \
+  python:3.11-slim
+
+podman rm -f python && podman run -d \
+  --name python \
+  -v $(pwd):/app \
+  -w /app \
+  python:3.11-slim \
+  /bin/bash -c "while true; do sleep 50; done"
