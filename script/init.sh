@@ -28,19 +28,6 @@ podman rm -f $container_name && podman run -d \
   -v $(pwd)/querys/tables:/querys \
   trinodb/trino 
 
-check_container_status() {
-    podman inspect --format '{{.State.Status}}' $container_name 2>/dev/null
-}
-
-while true; do
-    status=$(check_container_status)
-    if [[ "$status" == "running" ]]; then
-        echo "O contêiner $container_name está em execução."
-        break
-    else
-        echo "Aguardando o contêiner $container_name iniciar..."
-    fi
-done
 echo "Inicializando configurações"
 show_loading 15
 echo "Criando estrutura do banco de dados"

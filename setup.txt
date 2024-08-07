@@ -28,3 +28,5 @@ podman rm -f python && podman run -d \
   -w /app \
   python:3.11-slim \
   /bin/bash -c "while true; do sleep 50; done"
+
+  podman run -d --name superset apache/superset

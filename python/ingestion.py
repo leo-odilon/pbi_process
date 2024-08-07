@@ -4,6 +4,8 @@ import argparse
 import os
 import glob
 import time
+from datetime import datetime
+import pytz
 
 def process_excel_to_parquet(file_path, sheet_name, skip_rows, output_folder, parquet_name):
     # Verificar se a pasta de saída existe, se não, criá-la
@@ -28,8 +30,12 @@ def process_excel_to_parquet(file_path, sheet_name, skip_rows, output_folder, pa
                     .replace('\n', '_') 
                   for col in df.columns]
 
-    # Construir o caminho do arquivo de saída com timestamp
+    timezone = pytz.timezone('America/Sao_Paulo')
+    current_time = datetime.now(timezone)
+    df['source_timestamp'] = current_time
+
     timestamp = time.strftime('%Y%m%d_%H%M%S')
+    # Construir o caminho do arquivo de saída com timestamp
     output_file_path = f'{output_folder}/{parquet_name}_{timestamp}.parquet'
     
     # Salvar o DataFrame em formato Parquet
@@ -54,7 +60,7 @@ if __name__ == "__main__":
     
     # Verificar se existem arquivos Excel na pasta
     if not excel_files:
-        raise FileNotFoundError("Nenhum arquivo Excel encontrado na pasta especificada.")
+        raise FileNotFoundError(f"Nenhum arquivo Excel encontrado na pasta {args.folder_path}.")
     
     # Processar cada arquivo Excel encontrado
     for file_path in excel_files:

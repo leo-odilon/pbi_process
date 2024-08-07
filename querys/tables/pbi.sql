@@ -10,7 +10,8 @@ CREATE TABLE hive.pbi.incident_records (
 	affected_ci_id VARCHAR,
 	affected_ci_name VARCHAR,
 	tag_1 VARCHAR,
-	tag_6 VARCHAR
+	tag_6 VARCHAR,
+   source_timestamp TIMESTAMP
 )
 WITH (
    format = 'PARQUET',
@@ -22,7 +23,8 @@ CREATE TABLE hive.pbi.ir_activity (
    incident_id VARCHAR,
    date_time_timezone_based TIMESTAMP,
    type VARCHAR,
-   assignment_group VARCHAR
+   assignment_group VARCHAR,
+   source_timestamp TIMESTAMP
 )
 WITH (
    format = 'PARQUET',
@@ -32,9 +34,10 @@ WITH (
 --drop table if exists hive.pbi.ibm_queue;
 CREATE TABLE hive.pbi.ibm_queue (
 	row_labels VARCHAR,
-    empresa VARCHAR,
-    modulo VARCHAR,
-    sdm VARCHAR
+   empresa VARCHAR,
+   modulo VARCHAR,
+   sdm VARCHAR,
+   source_timestamp TIMESTAMP
 )
 WITH (
     format = 'PARQUET',
