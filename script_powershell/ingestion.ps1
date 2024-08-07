@@ -7,11 +7,12 @@ Set-Location ..\
 podman rm -f python
 podman run -d `
   --name python `
+  --network host `
   -v ${PWD}:/app `
   -w /app `
   python:3.11-slim `
   /bin/bash -c "while true; do sleep 50; done"
-
+# ls
 # Instalar as dependências
 podman exec -it python /bin/sh -c "pip install --no-cache-dir -r /app/docker/requirements.txt"
 
