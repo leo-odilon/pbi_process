@@ -8,8 +8,6 @@ podman rm -f python && podman run -d \
   python:3.11-slim \
   /bin/bash -c "while true; do sleep 50; done"
 
-# podman exec -it pip install --no-cache-dir -r /app/docker/requirements.txt
-
 podman exec -it python /bin/sh -c "pip install --no-cache-dir -r /app/docker/requirements.txt"
 
 podman exec -it python /bin/sh -c "python /app/python/ingestion.py /app/raw_file/queue 0 /app/parquet/pbi/ibm_queue ibm_queue"
@@ -18,7 +16,7 @@ podman exec -it python /bin/sh -c "python /app/python/ingestion.py /app/raw_file
 sleep 2
 podman exec -it python /bin/sh -c "python /app/python/ingestion.py /app/raw_file/report --sheet_name='IR - Activity' 3 /app/parquet/pbi/ir_activity ir_activity"
 sleep 2
-# podman exec -it python /bin/sh -c "python /app/python/backup.py /app/raw_file/report"
-# podman exec -it python /bin/sh -c "python /app/python/backup.py /app/raw_file/queue"
+podman exec -it python /bin/sh -c "python /app/python/backup.py /app/raw_file/report"
+podman exec -it python /bin/sh -c "python /app/python/backup.py /app/raw_file/queue"
 
 podman rm -f python
