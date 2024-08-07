@@ -29,4 +29,31 @@ podman rm -f python && podman run -d \
   python:3.11-slim \
   /bin/bash -c "while true; do sleep 50; done"
 
-  podman run -d --name superset apache/superset
+
+podman run -d --name hive --network hive-network \
+  -p 10000:10000 \
+  -p 10002:10002 \
+  -v /Users/odilon/projetos/poc/pbi_process/parquet:/data/parquet \
+  -v /Users/odilon/projetos/poc/pbi_process/hive-config:/etc/hive \
+  apache/hive:4.0.0
+
+podman rm -f hive4 &&  podman run -d \
+  --name hive4 \
+  -p 10000:10000 -p 10002:10002 \
+  --env SERVICE_NAME=hiveserver2 \
+  -v /Users/odilon/projetos/poc/pbi_process/parquet:/data/parquet \
+  -v /Users/odilon/projetos/poc/pbi_process/query/tables:/data/tables \
+  apache/hive:4.0.0 
+
+  --env SERVICE_NAME=hiveserver2 \
+  --env IS_RESUME="true" \
+  -v /Users/odilon/projetos/poc/pbi_process/hive-warehouse:/opt/hive/data/warehouse \
+
+podman run -d \
+  -p 9083:9083 \
+  --env SERVICE_NAME=metastore \
+  --name metastore-standalone \
+  apache/hive:4.0.0
+
+
+podman exec -it hive4 /bin/sh -c "beeline -u jdbc:hive2://localhost:10000 -f /data/tables/hive.sql"
