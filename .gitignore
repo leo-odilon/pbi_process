@@ -1,5 +1,4 @@
 *.xlsx
 *.bak
 *.parquet
-data/*
-raw_file/*
+data/hive/*
