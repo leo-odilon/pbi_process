@@ -1,6 +1,6 @@
 #!/bin/bash
 
-container_name="trino"
+container_name="hive4"
 
 show_loading() {
     local duration=$1
@@ -21,15 +21,21 @@ cd ..
 echo $(pwd)
 podman rm -f $container_name && podman run -d \
   --name $container_name \
-  -p 8080:8080 \
-  -v $(pwd)/etc:/etc/trino \
-  -v $(pwd)/data:/data \
-  -v $(pwd)/parquet:/parquet \
-  -v $(pwd)/querys/tables:/querys \
-  trinodb/trino 
+  -p 10000:10000 -p 10002:10002 \
+  --env SERVICE_NAME=hiveserver2 \
+  -v $(pwd)/parquet:/data/parquet \
+  -v $(pwd)/query/tables:/data/tables \
+  apache/hive:4.0.0 
 
 echo "Inicializando configurações"
-show_loading 15
+show_loading 10
 echo "Criando estrutura do banco de dados"
-podman exec -it $container_name /bin/sh -c "trino --server http://localhost:8080 -f /querys/pbi.sql"
-echo "Ambiente pronto"
+podman exec -it $container_name /bin/sh -c "beeline -u jdbc:hive2://localhost:10000 -f /data/tables/hive.sql"
+echo "Apache Hive pronto"
+echo "Verificando arquivos para processamento"
+show_loading 2
+
+cd script
+source ./ingestion.sh
+
+echo "Tudo pronto"

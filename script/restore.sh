@@ -1,6 +1,10 @@
 #!/bin/bash
 
 cd ./../
+
+rm -rf $(pwd)/data/hive
+rm -rf $(pwd)/parquet/pbi
+
 podman rm -f python && podman run -d \
   --name python \
   -v $(pwd):/app \
