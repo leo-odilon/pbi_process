@@ -57,3 +57,9 @@ podman run -d \
 
 
 podman exec -it hive4 /bin/sh -c "beeline -u jdbc:hive2://localhost:10000 -f /data/tables/hive.sql"
+
+
+Set-ExecutionPolicy RemoteSigned
+Set-ExecutionPolicy Unrestricted
+Get-ChildItem "E:\pbi_process-master\script_powershell" -Recurse | Unblock-File
+Unblock-File -Path "E:\pbi_process-master\script_powershell\ingestion.ps1"
