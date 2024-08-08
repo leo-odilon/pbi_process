@@ -18,6 +18,8 @@ Write-Host "Inicializando configurações"
 Sleep 10
 Write-Host "Criando estrutura do banco de dados"
 podman exec -it $containerName /bin/sh -c "beeline -u jdbc:hive2://localhost:10000 -f /data/tables/hive.sql"
+Sleep 2
+podman exec -it $containerName /bin/sh -c "beeline -u jdbc:hive2://localhost:10000 -f /data/tables/views.sql"
 Write-Host "Apache Hive pronto"
 Write-Host "Verificando arquivos para processamento"
 Sleep 2

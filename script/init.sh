@@ -31,6 +31,8 @@ echo "Inicializando configurações"
 show_loading 10
 echo "Criando estrutura do banco de dados"
 podman exec -it $container_name /bin/sh -c "beeline -u jdbc:hive2://localhost:10000 -f /data/tables/hive.sql"
+sleep 2
+podman exec -it $container_name /bin/sh -c "beeline -u jdbc:hive2://localhost:10000 -f /data/tables/views.sql"
 echo "Apache Hive pronto"
 echo "Verificando arquivos para processamento"
 show_loading 2
