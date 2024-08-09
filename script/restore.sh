@@ -5,16 +5,16 @@ cd ./../
 rm -rf $(pwd)/data/hive
 rm -rf $(pwd)/parquet/pbi
 
-podman rm -f python && podman run -d \
-  --name python \
-  -v $(pwd):/app \
-  -w /app \
-  python:3.11-slim \
-  /bin/bash -c "while true; do sleep 50; done"
+# podman rm -f python && podman run -d \
+#   --name python \
+#   -v $(pwd):/app \
+#   -w /app \
+#   python:3.11-slim \
+#   /bin/bash -c "while true; do sleep 50; done"
 
 # podman exec -it python /bin/sh -c "pip install --no-cache-dir -r /app/docker/requirements.txt"
 
-podman exec -it python /bin/sh -c "python /app/python/restore.py /app/raw_file/queue"
-podman exec -it python /bin/sh -c "python /app/python/restore.py /app/raw_file/report"
+podman run --rm -v $(pwd):/app python:v1.0 python /app/python/restore.py /app/raw_file/queue
+podman run --rm -v $(pwd):/app python:v1.0 python python /app/python/restore.py /app/raw_file/report
 
-podman rm -f python
+# podman rm -f python

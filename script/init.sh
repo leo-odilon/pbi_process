@@ -1,6 +1,8 @@
 #!/bin/bash
 
 container_name="hive4"
+IMAGE_NAME="python"
+IMAGE_VERSION="v1.0"
 
 show_loading() {
     local duration=$1
@@ -19,6 +21,15 @@ show_loading() {
 
 cd ..
 echo $(pwd)
+# Verifica se a imagem já existe
+if [[ "$(podman images -q ${IMAGE_NAME}:${IMAGE_VERSION} 2> /dev/null)" == "" ]]; then
+  echo "A imagem ${IMAGE_NAME}:${IMAGE_VERSION} não existe. Criando agora..."
+  podman build -f $(pwd)/docker/Dockerfile.python -t ${IMAGE_NAME}:${IMAGE_VERSION} .
+  echo "Imagem ${IMAGE_NAME}:${IMAGE_VERSION} criada com sucesso."
+else
+  echo "A imagem ${IMAGE_NAME}:${IMAGE_VERSION} já existe. Nenhuma ação necessária."
+fi
+
 podman rm -f $container_name && podman run -d \
   --name $container_name \
   -p 10000:10000 -p 10002:10002 \
